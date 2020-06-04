@@ -18,8 +18,7 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-Route::post('login', 'UsersController@login');
-Route::post('signup', 'UsersController@signup');
+
 
 // Route::get('aux', 'UserController@login');
 // Route::post('aux', 'UserController@login');
@@ -29,35 +28,41 @@ Route::post('signup', 'UsersController@signup');
 
 // Route::get('cliente', 'UserController@login');
 // Route::post('cliente', 'UserController@login');
-Route::get('usuario/{id}', 'UsersController@get');
-Route::put('usuario/{id}', 'UsersController@update');
-Route::delete('usuario/{id}', 'UsersController@delete');
-Route::get('usuario/{id}/catalogo', 'UsersController@catalogos');
 
-Route::post('catalogo', 'CatalogoController@create');
-Route::get('catalogo/{id}', 'CatalogoController@get');
-Route::put('catalogo/{id}', 'CatalogoController@update');
-Route::delete('catalogo/{id}', 'CatalogoController@delete');
+Route::group(['middleware' => ['cors']], function () {
+    Route::post('login', 'UsersController@login');
+    Route::post('signup', 'UsersController@signup');
 
-Route::get('prestamo/{id}', 'PrestamoController@getAll');
-Route::post('prestamo', 'PrestamoController@create');
-Route::put('prestamo/{id}', 'PrestamoController@update');
-Route::get('prestamo/{idU}/{idCat}', 'PrestamoController@get');
+    Route::get('usuario/{id}', 'UsersController@get');
+    Route::put('usuario/{id}', 'UsersController@update');
+    Route::delete('usuario/{id}', 'UsersController@delete');
+    Route::get('usuario/{id}/catalogo', 'UsersController@catalogos');
 
-Route::post('pedido', 'PedidoController@create');
-Route::get('pedido/{id}', 'PedidoController@get');
-Route::put('pedido/{id}', 'PedidoController@update');
-Route::get('pedido/admin/{id}', 'PedidoController@getAdmin');
-Route::get('pedido/usuario/{id}', 'PedidoController@getUser');
+    Route::post('catalogo', 'CatalogoController@create');
+    Route::get('catalogo/{id}', 'CatalogoController@get');
+    Route::put('catalogo/{id}', 'CatalogoController@update');
+    Route::delete('catalogo/{id}', 'CatalogoController@delete');
 
-Route::get('pedido/detalle/{id}', 'PedidoController@getDetalle');
-Route::post('pedido/detalle', 'PedidoController@addDetalle');
-Route::put('pedido/detalle/{id}', 'PedidoController@updateDetalle');
-Route::delete('pedido/detalle/{id}', 'PedidoController@deleteDetalle');
+    Route::get('prestamo/{id}', 'PrestamoController@getAll');
+    Route::post('prestamo', 'PrestamoController@create');
+    Route::put('prestamo/{id}', 'PrestamoController@update');
+    Route::get('prestamo/{idU}/{idCat}', 'PrestamoController@get');
 
-Route::get('pago/{id}', 'PagoController@get');
-Route::get('pago/admin/{id}', 'PagoController@getDetalle');
-Route::get('pago/usuario/{id}', 'PagoController@getUser');
-Route::post('pago', 'PagoController@create');
-Route::put('pago/{id}', 'PagoController@update');
-Route::delete('pago/{id}', 'PagoController@delete');
+    Route::post('pedido', 'PedidoController@create');
+    Route::get('pedido/{id}', 'PedidoController@get');
+    Route::put('pedido/{id}', 'PedidoController@update');
+    Route::get('pedido/admin/{id}', 'PedidoController@getAdmin');
+    Route::get('pedido/usuario/{id}', 'PedidoController@getUser');
+
+    Route::get('pedido/detalle/{id}', 'PedidoController@getDetalle');
+    Route::post('pedido/detalle', 'PedidoController@addDetalle');
+    Route::put('pedido/detalle/{id}', 'PedidoController@updateDetalle');
+    Route::delete('pedido/detalle/{id}', 'PedidoController@deleteDetalle');
+
+    Route::get('pago/{id}', 'PagoController@get');
+    Route::get('pago/admin/{id}', 'PagoController@getDetalle');
+    Route::get('pago/usuario/{id}', 'PagoController@getUser');
+    Route::post('pago', 'PagoController@create');
+    Route::put('pago/{id}', 'PagoController@update');
+    Route::delete('pago/{id}', 'PagoController@delete');
+});
