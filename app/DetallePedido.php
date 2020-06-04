@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class PedidoDetalle extends Model
+class DetallePedido extends Model
 {
     protected $primaryKey = 'idDetallePedido';
     public $incrementing = false;

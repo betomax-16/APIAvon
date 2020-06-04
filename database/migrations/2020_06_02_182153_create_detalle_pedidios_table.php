@@ -13,7 +13,7 @@ class CreateDetallePedidiosTable extends Migration
      */
     public function up()
     {
-        Schema::create('detalle_pedidios', function (Blueprint $table) {
+        Schema::create('detalle_pedidos', function (Blueprint $table) {
             $table->string('idDetallePedido');
             $table->string('idPedido');
             $table->string('idProducto');

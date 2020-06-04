@@ -42,12 +42,12 @@ Route::delete('catalogo/{id}', 'CatalogoController@delete');
 Route::get('prestamo/{id}', 'PrestamoController@getAll');
 Route::post('prestamo', 'PrestamoController@create');
 Route::put('prestamo/{id}', 'PrestamoController@update');
-Route::post('prestamo', 'PrestamoController@get');
+Route::get('prestamo/{idU}/{idCat}', 'PrestamoController@get');
 
 Route::post('pedido', 'PedidoController@create');
 Route::get('pedido/{id}', 'PedidoController@get');
 Route::put('pedido/{id}', 'PedidoController@update');
-Route::get('pedido/admmin/{id}', 'PedidoController@getAdmin');
+Route::get('pedido/admin/{id}', 'PedidoController@getAdmin');
 Route::get('pedido/usuario/{id}', 'PedidoController@getUser');
 
 Route::get('pedido/detalle/{id}', 'PedidoController@getDetalle');
@@ -55,9 +55,9 @@ Route::post('pedido/detalle', 'PedidoController@addDetalle');
 Route::put('pedido/detalle/{id}', 'PedidoController@updateDetalle');
 Route::delete('pedido/detalle/{id}', 'PedidoController@deleteDetalle');
 
-Route::get('pago/{id}', 'PedidoController@getDetalle');
-Route::get('pago/admin/{id}', 'PedidoController@getDetalle');
-Route::get('pago/usuario/{id}', 'PedidoController@getDetalle');
-Route::post('pago', 'PedidoController@addDetalle');
-Route::put('pago/{id}', 'PedidoController@updateDetalle');
-Route::delete('pago/{id}', 'PedidoController@deleteDetalle');
+Route::get('pago/{id}', 'PagoController@get');
+Route::get('pago/admin/{id}', 'PagoController@getDetalle');
+Route::get('pago/usuario/{id}', 'PagoController@getUser');
+Route::post('pago', 'PagoController@create');
+Route::put('pago/{id}', 'PagoController@update');
+Route::delete('pago/{id}', 'PagoController@delete');

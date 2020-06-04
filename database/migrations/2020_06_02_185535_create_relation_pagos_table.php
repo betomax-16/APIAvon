@@ -14,7 +14,7 @@ class CreateRelationPagosTable extends Migration
     public function up()
     {
         Schema::table('pagos', function (Blueprint $table) {
-            $table->foreign('idDetallePedido')->references('idDetallePedido')->on('detalle_pedidios')->onDelete('cascade');
+            $table->foreign('idDetallePedido')->references('idDetallePedido')->on('detalle_pedidos')->onDelete('cascade');
         });
     }
 

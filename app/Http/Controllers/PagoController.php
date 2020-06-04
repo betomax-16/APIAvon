@@ -47,6 +47,7 @@ class PagoController extends Controller
     public function create(Request $request)
     {
         $pago = new Pago([
+            'idPago' => uniqid(),
             'idDetallePedido' => $request->idDetallePedido,
             'idUsuario' => $request->idUsuario,
             'monto' => $request->monto

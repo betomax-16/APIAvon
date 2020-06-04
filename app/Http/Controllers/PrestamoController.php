@@ -17,6 +17,7 @@ class PrestamoController extends Controller
             'idUsuario'    => $request->idUsuario
         ]);
         $prestamo->save();
+        
         $catalogo = Catalogo::find($request->idCatalogo);
 
         if ($catalogo) {
@@ -40,13 +41,17 @@ class PrestamoController extends Controller
         }
     }
 
-    public function get(Request $request)
+    public function get($idU, $idCat)
     {
-        $prestamo = Prestamo::where(['idCatalogo' => $request->idCatalogo, 'idUsuario' => $request->idUsuario])->order_by('upload_time', 'desc')->first();
+        $prestamo = Prestamo::where(['idCatalogo' => $idCat, 'idUsuario' => $idU])->orderBy('updated_at', 'desc')->first();
         if ($prestamo) {
-            $user = User::find($prestamo->idUsuario);
+            $user = User::find($idU);
             $catalogo = Catalogo::find($prestamo->idCatalogo);
-            return response()->json(['usuario' => $user, 'catalogo' => $catalogo], 201);
+            $prestamo->usuario = $user;
+            $prestamo->catalogo = $catalogo;
+            unset($prestamo->idUsuario);
+            unset($prestamo->idCatalogo);
+            return response()->json($prestamo);
         }
         else {
             return response()->json(['message' => 'Not found'], 401);

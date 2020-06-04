@@ -6,17 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Pago extends Model
 {
-    protected $primaryKey = 'idCatalogo';
+    protected $primaryKey = 'idPago';
     public $incrementing = false;
     protected $keyType = 'string';
-    public $timestamps = false;
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'idDetallePedido', 'idUsuario', 'monto'
+        'idPago', 'idDetallePedido', 'idUsuario', 'monto'
     ];
 
     /**

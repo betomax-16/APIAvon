@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\User;
 use App\Catalogo;
 use App\Pedido;
-use App\PedidoDetalle;
+use App\DetallePedido;
 use Illuminate\Http\Request;
 
 class PedidoController extends Controller
@@ -22,17 +22,17 @@ class PedidoController extends Controller
 
         if ($request->productos) {
             foreach ($request->productos as $key => $value) {
-                $pedidoDetalle = new PedidoDetalle([
+                $DetallePedido = new DetallePedido([
                     'idDetallePedido' => uniqid(),
                     'idPedido' => $pedido->idPedido,
-                    'idProducto' => $value->idProducto,
-                    'idCatalogo' => $value->idCatalogo,
-                    'detalle' => $value->detalle,
-                    'cantidad' => $value->cantidad,
-                    'precioUnitario' => $value->precioUnitario,
-                    'estatus' => $value->estatus
+                    'idProducto' => $value['idProducto'],
+                    'idCatalogo' => $value['idCatalogo'],
+                    'detalle' => $value['detalle'],
+                    'cantidad' => $value['cantidad'],
+                    'precioUnitario' => $value['precioUnitario'],
+                    'estatus' => $value['estatus']
                 ]);
-                $pedidoDetalle->save();
+                $DetallePedido->save();
             }
         }
 
@@ -43,8 +43,8 @@ class PedidoController extends Controller
     {
         $pedido = Pedido::find($id);
         if ($pedido) {
-            $pedidoDetalle = PedidoDetalle::where(['idPedido' => $id])->get();
-            $pedido->productos = $pedidoDetalle;
+            $DetallePedido = DetallePedido::where(['idPedido' => $id])->get();
+            $pedido->productos = $DetallePedido;
             return response()->json($pedido);
         }
         else {
@@ -70,12 +70,10 @@ class PedidoController extends Controller
 
     public function getUser($id)
     {
-        $pedidos = Pedido::where(['idUsuario' => $id, 'estatus' => 'en progreso'])->get();
-        if ($pedidos && is_array($pedidos)) {
+        $pedidos = Pedido::where(['idUsuario' => $id, 'estatus' => 'En Proceso'])->get();
+        if ($pedidos) {
             foreach ($pedidos as $key => $value) {
-                $value->productos = array();
-                $pedidoDetalle = PedidoDetalle::where(['idPedido' => $value->idPedido])->get();
-                array_push($pedido->productos, $pedidoDetalle);
+                $value['productos'] = DetallePedido::where(['idPedido' => $value->idPedido])->get();
             }
             return response()->json($pedidos);
         }
@@ -88,19 +86,15 @@ class PedidoController extends Controller
         if ($user) {
             $catalogos = Catalogo::where('idUsuario', $user->idUsuario)->get();
             foreach ($catalogos as $key => $value) {
-                $pedidoDetalle = PedidoDetalle::where(['idCatalogo' => $value->idCatalogo, 'estatus' => 'en progreso'])->get();
+                $DetallePedido = DetallePedido::groupBy('idPedido')->havingRaw('idCatalogo = \''.$value->idCatalogo.'\' and estatus = \'En Proceso\'')->get();
 
-                foreach ($pedidoDetalle as $key2 => $value2) {
-                    if (!isset($pedidosAux[$value2->idPedido])) {
-                        $pedido = Pedido::find($value2->idPedido);
-                        array_push($pedidosAux, $pedido);
-                    }
+                foreach ($DetallePedido as $key2 => $value2) {
+                    $pedido = Pedido::find($value2->idPedido);
+                    array_push($pedidosAux, $pedido);
                 }
 
                 foreach ($pedidosAux as $key3 => $value3) {
-                    $value3->productos = array();
-                    $pedidoDetalle = PedidoDetalle::where(['idPedido' => $value3->idPedido])->get();
-                    array_push($value3->productos, $pedidoDetalle);
+                    $value3->productos = DetallePedido::where(['idPedido' => $value3->idPedido])->get();
                 }
 
                 return response()->json($pedidosAux);
@@ -114,9 +108,9 @@ class PedidoController extends Controller
 
     public function getDetalle($id)
     {
-        $pedidoDetalle = PedidoDetalle::find($id);
-        if ($pedidoDetalle) {
-            return response()->json($pedidos);
+        $DetallePedido = DetallePedido::find($id);
+        if ($DetallePedido) {
+            return response()->json($DetallePedido);
         }
         else {
             return response()->json(['message' => 'Unauthorized'], 401);
@@ -125,23 +119,25 @@ class PedidoController extends Controller
 
     public function addDetalle(Request $request)
     {
-        if (is_array($request)) {
-            foreach ($request as $key => $value) {
-                $pedidoDetalle = new PedidoDetalle([
+        $body = json_decode($request->getContent());
+        if (is_array($body)) {
+            $body = json_decode($request->getContent(), true);
+            foreach ($body as $key => $value) {
+                $DetallePedido = new DetallePedido([
                     'idDetallePedido' => uniqid(),
-                    'idPedido' => $value->idPedido,
-                    'idProducto' => $value->idProducto,
-                    'idCatalogo' => $value->idCatalogo,
-                    'detalle' => $value->detalle,
-                    'cantidad' => $value->cantidad,
-                    'precioUnitario' => $value->precioUnitario,
-                    'estatus' => $value->estatus
+                    'idPedido' => $value['idPedido'],
+                    'idProducto' => $value['idProducto'],
+                    'idCatalogo' => $value['idCatalogo'],
+                    'detalle' => $value['detalle'],
+                    'cantidad' => $value['cantidad'],
+                    'precioUnitario' => $value['precioUnitario'],
+                    'estatus' => $value['estatus']
                 ]);
-                $pedidoDetalle->save();
+                $DetallePedido->save();
             }
         }
         else {
-            $pedidoDetalle = new PedidoDetalle([
+            $DetallePedido = new DetallePedido([
                 'idDetallePedido' => uniqid(),
                 'idPedido' => $request->idPedido,
                 'idProducto' => $request->idProducto,
@@ -151,24 +147,24 @@ class PedidoController extends Controller
                 'precioUnitario' => $request->precioUnitario,
                 'estatus' => $request->estatus
             ]);
-            $pedidoDetalle->save();
+            $DetallePedido->save();
         }
         return response()->json(['message' => 'Successfully created detalle!'], 201);
     }
 
     public function updateDetalle(Request $request, $id)
     {
-        $pedidoDetalle = PedidoDetalle::find($id);
-        if ($pedidoDetalle) {
-            $pedidoDetalle->idProducto = $request->idProducto != '' ? $request->idProducto : $pedidoDetalle->idProducto;
-            $pedidoDetalle->idCatalogo = $request->idCatalogo != '' ? $request->idCatalogo : $pedidoDetalle->idCatalogo;
-            $pedidoDetalle->detalle = $request->detalle != '' ? $request->detalle : $pedidoDetalle->detalle;
-            $pedidoDetalle->cantidad = $request->cantidad != '' ? $request->cantidad : $pedidoDetalle->cantidad;
-            $pedidoDetalle->precioUnitario = $request->precioUnitario != '' ? $request->precioUnitario : $pedidoDetalle->precioUnitario;
-            $pedidoDetalle->estatus = $request->estatus != '' ? $request->estatus : $pedidoDetalle->estatus;
+        $DetallePedido = DetallePedido::find($id);
+        if ($DetallePedido) {
+            $DetallePedido->idProducto = $request->idProducto != '' ? $request->idProducto : $DetallePedido->idProducto;
+            $DetallePedido->idCatalogo = $request->idCatalogo != '' ? $request->idCatalogo : $DetallePedido->idCatalogo;
+            $DetallePedido->detalle = $request->detalle != '' ? $request->detalle : $DetallePedido->detalle;
+            $DetallePedido->cantidad = $request->cantidad != '' ? $request->cantidad : $DetallePedido->cantidad;
+            $DetallePedido->precioUnitario = $request->precioUnitario != '' ? $request->precioUnitario : $DetallePedido->precioUnitario;
+            $DetallePedido->estatus = $request->estatus != '' ? $request->estatus : $DetallePedido->estatus;
 
-            $pedidoDetalle->save();
-            return response()->json($pedidoDetalle);
+            $DetallePedido->save();
+            return response()->json($DetallePedido);
         }
         else {
             return response()->json(['message' => 'Unauthorized'], 401);
@@ -177,9 +173,9 @@ class PedidoController extends Controller
 
     public function deleteDetalle($id)
     {
-        $pedidoDetalle = PedidoDetalle::find($id);
-        if ($pedidoDetalle) {
-            $pedidoDetalle->delete();
+        $DetallePedido = DetallePedido::find($id);
+        if ($DetallePedido) {
+            $DetallePedido->delete();
             return response()->json(['message' => 'Delete success']);
         }
         else {
